@@ -1,0 +1,23 @@
+# Configuration Netlify.
+# Le site est un seul fichier statique : rien à compiler, rien à installer.
+
+[build]
+  # On publie la racine du dépôt telle quelle. Netlify sert index.html.
+  publish = "."
+  command = ""
+
+# Le fichier index.html contient tout (HTML, CSS, JS, images).
+# On demande au navigateur de le revérifier à chaque visite, sinon une
+# correction poussée sur GitHub mettrait des heures à apparaître chez les gens
+# qui ont déjà ouvert le site.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Quelques en-têtes de sécurité de base.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
