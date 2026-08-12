@@ -7,9 +7,35 @@ Tu peux l'ouvrir en double-cliquant dessus, ou le mettre en ligne tel quel.
 
 | Fichier | À quoi ça sert |
 |---|---|
-| `index.html` | **Le site.** Tout est dedans : le HTML, le CSS, le JavaScript, la police. Aucune dépendance à installer. |
+| `index.html` | **Le site.** Le HTML, le CSS et le JavaScript sont tous dedans. Aucune dépendance à installer. |
+| `images/` | Les 9 photos de l'écran d'accueil, recadrées et compressées. 92 ko en tout. |
 | `supabase/schema.sql` | La base de données, à coller dans Supabase. Rien à faire tourner sur ta machine. |
 | `GUIDE.md` | Les explications : les clés, le RLS, l'auth Google, le captcha. À lire avant de brancher Supabase. |
+
+Les chemins vers les images sont relatifs, donc le site fonctionne aussi en
+double-cliquant `index.html`, sans serveur et sans connexion — à condition de
+garder le dossier `images/` à côté.
+
+## Crédits photo
+
+Les visuels de l'écran d'accueil viennent d'[Unsplash](https://unsplash.com),
+sous [licence Unsplash](https://unsplash.com/license) : usage commercial
+autorisé, sans attribution obligatoire. Elle est donnée ici par correction.
+
+| Image | Photographe |
+|---|---|
+| `01-tasses` | Cafe Concetto |
+| `02-lampe` | MK S |
+| `03-vases` | Tamara Harhai |
+| `04-lampe-suspendue` | Rylan Kealey |
+| `05-chemise` | Santhosh Kumar |
+| `06-platine-portable` | Ryan Arnst |
+| `07-baskets` | Vlad Ciutacu |
+| `08-appareil-photo` | Leonard Reeb |
+| `09-platine` | Kelsey He |
+
+Les originaux (21 Mo) restent en local dans `images-brutes/`, exclu du dépôt.
+Pour refaire une image : recadrage 3/4, 360 × 480 px, WebP qualité 80.
 
 ## État actuel
 

@@ -1,2 +1,6 @@
 .DS_Store
 *.bak
+
+# Originaux Unsplash : plusieurs Mo chacun, inutiles au site.
+# Seules les versions recadrees et compressees de images/ sont versionnees.
+images-brutes/
