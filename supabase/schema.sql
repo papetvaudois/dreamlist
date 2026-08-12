@@ -219,7 +219,15 @@ declare
   n integer := 0;
 begin
   wanted := lower(coalesce(new.raw_user_meta_data ->> 'handle', ''));
-  wanted := regexp_replace(wanted, '[^a-z0-9._]', '', 'g');
+  -- « é » doit devenir « e » et non disparaître : on translittère avant de
+  -- filtrer. Sinon « zoé.m » deviendrait « zo.m », et le pseudo ne ressemble
+  -- plus à ce que la personne a tapé.
+  wanted := translate(wanted,
+    'àáâãäåçèéêëìíîïñòóôõöùúûüýÿœæ',
+    'aaaaaaceeeeiiiinooooouuuuyyoa');
+  wanted := regexp_replace(wanted, '[^a-z0-9._]+', '.', 'g');
+  wanted := regexp_replace(wanted, '\.{2,}', '.', 'g');
+  wanted := regexp_replace(wanted, '^[._]+|[._]+$', '', 'g');
   if length(wanted) < 3 then
     wanted := 'user' || substr(replace(new.id::text, '-', ''), 1, 6);
   end if;
