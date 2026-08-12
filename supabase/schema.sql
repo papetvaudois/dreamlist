@@ -299,6 +299,31 @@ alter table public.likes         enable row level security;
 alter table public.board_layouts enable row level security;
 
 
+-- --- privilèges de table ---------------------------------------------------
+-- Il y a DEUX serrures superposées, qu'on confond souvent :
+--   le GRANT ci-dessous = « ce rôle a-t-il le droit de toucher cette table ? »
+--   le RLS ci-dessus    = « et quelles LIGNES exactement ? »
+--
+-- Supabase peut poser ces privilèges tout seul (option « Automatically expose
+-- new tables » à la création du projet). On ne s'y fie pas : le script les
+-- écrit lui-même, donc il marche quel que soit le réglage choisi.
+--
+-- anon (visiteur non connecté) n'obtient que la LECTURE. Toute écriture exige
+-- un compte connecté — et le RLS restreint encore, ligne par ligne.
+
+grant usage on schema public to anon, authenticated;
+
+grant select on table
+  public.profiles, public.wishlists, public.items, public.follows,
+  public.comments, public.likes, public.board_layouts
+  to anon, authenticated;
+
+grant insert, update, delete on table
+  public.profiles, public.wishlists, public.items, public.follows,
+  public.comments, public.likes, public.board_layouts
+  to authenticated;
+
+
 -- --- profiles --------------------------------------------------------------
 -- Les profils sont un annuaire public : l'écran Explorer doit pouvoir chercher
 -- des comptes. En revanche personne ne modifie le profil de quelqu'un d'autre.
