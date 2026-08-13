@@ -131,17 +131,18 @@ create index if not exists likes_user_idx          on public.likes (user_id);
 -- Ces fonctions répondent à « est-ce que l'utilisateur courant a le droit de
 -- lire ça ? ». Elles sont appelées par les policies RLS plus bas.
 --
--- security definer = la fonction s'exécute avec les droits de son créateur,
--- donc elle peut lire les tables sans être elle-même bloquée par RLS. C'est
--- indispensable ici, sinon une policy qui interroge une table protégée par une
--- autre policy tournerait en rond. On fixe search_path pour éviter qu'un objet
--- malveillant créé ailleurs se glisse à la place du nôtre.
+-- Elles sont en security invoker : elles s'exécutent avec les droits de la
+-- personne qui appelle, donc le RLS s'applique aussi à l'intérieur. C'est le
+-- bon réglage ici — aucune de ces fonctions n'interroge la table dont elle
+-- sert la policy, il n'y a donc pas de récursion à craindre, et rien ne
+-- contourne le RLS. On fixe search_path pour éviter qu'un objet malveillant
+-- créé ailleurs se glisse à la place du nôtre.
 
 create or replace function public.can_read_wishlist(w_id uuid)
 returns boolean
 language sql
 stable
-security definer
+security invoker
 set search_path = public
 as $$
   select exists (
@@ -155,7 +156,7 @@ create or replace function public.owns_wishlist(w_id uuid)
 returns boolean
 language sql
 stable
-security definer
+security invoker
 set search_path = public
 as $$
   select exists (
@@ -168,7 +169,7 @@ create or replace function public.can_read_item(i_id uuid)
 returns boolean
 language sql
 stable
-security definer
+security invoker
 set search_path = public
 as $$
   select exists (
@@ -184,7 +185,7 @@ create or replace function public.can_read_comment_target(t_type text, t_id uuid
 returns boolean
 language sql
 stable
-security definer
+security invoker
 set search_path = public
 as $$
   select case t_type
@@ -253,6 +254,11 @@ begin
 end;
 $$;
 
+-- Un trigger n'a pas besoin que le client puisse appeler sa fonction :
+-- PostgreSQL verifie ce droit a la creation du trigger, pas a chaque
+-- declenchement. On le retire donc, ce qui evite qu'on l'invoque du dehors.
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
@@ -280,6 +286,8 @@ begin
   return new;
 end;
 $$;
+
+revoke execute on function public.enforce_follow_status() from public, anon, authenticated;
 
 drop trigger if exists follows_set_status on public.follows;
 create trigger follows_set_status
