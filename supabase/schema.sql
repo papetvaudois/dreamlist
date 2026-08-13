@@ -66,6 +66,11 @@ create table if not exists public.items (
   note        text not null default '',
   link        text,
   position    integer not null default 0,
+  -- Point de l'image a garder visible quand elle est recadree pour remplir sa
+  -- tuile, en pourcentages. 50/50 = le centre. Sans ca, une tuile large et
+  -- basse couperait le haut d'une lampe ou d'une chaise.
+  focus_x     smallint not null default 50 check (focus_x between 0 and 100),
+  focus_y     smallint not null default 50 check (focus_y between 0 and 100),
   created_at  timestamptz not null default now()
 );
 
